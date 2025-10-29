@@ -119,7 +119,7 @@
     "author": [
       {
         "@type": "Person",
-        "name": "Yaoli Liu, Yao-Xiang Ding(Corresponding author), Kun Zhou",
+        "name": "Yaoli Liu, Yao-Xiang Ding, Kun Zhou",
         "affiliation": {
           "@type": "Organization",
           "name": "Zhejiang University - State Key Laboratory of CAD&CG"
@@ -237,9 +237,9 @@
             <div class="is-size-5 publication-authors">
               <!-- TODO: Replace with your paper authors and their personal links -->
               <span class="author-block">
-                <a href="https://github.com/yaoliliu" target="_blank">Yaoli Liu</a><sup>*</sup>,</span>
+                <a href="https://github.com/yaoliliu" target="_blank">Yaoli Liu</a>,</span>
                 <span class="author-block">
-                  <a href="https://yaoxiangding.github.io/" target="_blank">Yao-Xiang Ding(Corresponding author)</a><sup>*</sup>,</span>
+                  <a href="https://yaoxiangding.github.io/" target="_blank">Yao-Xiang Ding</a>,</span>
                   <span class="author-block">
                     <a href="http://kunzhou.net/" target="_blank">Kun Zhou</a>
                   </span>
@@ -333,8 +333,7 @@
         <div class="content has-text-justified">
           <!-- TODO: Replace with your paper abstract -->
           <p>
-            This paper proposes FreeFuse, a novel training-free approach for multi-subject text-to-image generation through automatic fusion of multiple subject LoRAs. In contrast to existing methods that either focus on pre-inference LoRA weight merging or rely on segmentation models and complex techniques like noise blending to isolate LoRA outputs, our key insight is that context-aware dynamic subject masks can be automatically derived from cross-attention layer weights. Mathematical analysis shows that directly applying these masks to LoRA outputs during inference well approximates the case where the subject LoRA is integrated into the diffusion model and used individually for the masked region. FreeFuse demonstrates superior practicality and efficiency as it requires no additional training, no modification to LoRAs, no auxiliary models, and no user-defined prompt templates or region specifications. Alternatively, it only requires users to provide the LoRA activation words for seamless integration into standard workflows. Extensive experiments validate that FreeFuse outperforms existing approaches in both generation quality and usability under the multi-subject generation tasks. We will release the source code upon the official publication of the paper. 
-          </p>
+            This paper proposes FreeFuse, a novel training-free approach for multi-subject text-to-image generation through automatic fusion of multiple subject LoRAs. In contrast to existing methods that either focus on pre-inference LoRA weight merging or rely on segmentation models and complex techniques like noise blending to isolate LoRA outputs, our key insight is that context-aware dynamic subject masks can be automatically derived from cross-attention layer weights. Mathematical analysis shows that directly applying these masks to LoRA outputs during inference well approximates the case where the subject LoRA is integrated into the diffusion model and used individually for the masked region. FreeFuse demonstrates superior practicality and efficiency as it requires no additional training, no modification to LoRAs, no auxiliary models, and no user-defined prompt templates or region specifications. Alternatively, it only requires users to provide the LoRA activation words for seamless integration into standard workflows. Extensive experiments validate that FreeFuse outperforms existing approaches in both generation quality and usability under the multi-subject generation tasks. </p>
         </div>
       </div>
     </div>
