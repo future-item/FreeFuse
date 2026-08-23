@@ -1,511 +1,493 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- Primary Meta Tags -->
-  <!-- TODO: Replace with your paper title and author names -->
-  <meta name="title" content="FreeFuse">
-  <!-- TODO: Write a compelling 150-160 character description of your research -->
-  <meta name="description" content="Multi-Subject LoRA Fusion via Auto Masking at Test Time">
-  <!-- TODO: Add 5-10 relevant keywords for your research area -->
-  <meta name="keywords" content="Multi Concept Generation, Low Rank Adaptation, Diffusion Models, Text-to-Image Generation">
-  <!-- TODO: List all authors -->
-  <meta name="author" content="Yaoli Liu, Yao-Xiang Ding, Kun Zhou">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="article">
-  <!-- TODO: Replace with your institution or lab name -->
-  <meta property="og:site_name" content="Zhejiang University - State Key Laboratory of CAD&CG">
-  <!-- TODO: Same as paper title above -->
-  <meta property="og:title" content="FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time">
-  <!-- TODO: Same as description above -->
-  <meta property="og:description" content="Multi-Subject LoRA Fusion via Auto Masking at Test Time">
-  <!-- TODO: Replace with your actual website URL -->
-  <!-- <meta property="og:url" content="https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE"> -->
-  <!-- TODO: Create a 1200x630px preview image and update path -->
-  <!-- <meta property="og:image" content="https://YOUR_DOMAIN.com/static/images/social_preview.png"> -->
-  <!-- <meta property="og:image:width" content="1200"> -->
-  <!-- <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="PAPER_TITLE - Research Preview">
-  <meta property="article:published_time" content="2024-01-01T00:00:00.000Z">
-  <meta property="article:author" content="FIRST_AUTHOR_NAME">
-  <meta property="article:section" content="Research">
-  <meta property="article:tag" content="KEYWORD1">
-  <meta property="article:tag" content="KEYWORD2"> -->
-
-  <!-- Twitter -->
-  <!-- <meta name="twitter:card" content="summary_large_image"> -->
-  <!-- TODO: Replace with your lab/institution Twitter handle -->
-  <!-- <meta name="twitter:site" content="@YOUR_TWITTER_HANDLE"> -->
-  <!-- TODO: Replace with first author's Twitter handle -->
-  <!-- <meta name="twitter:creator" content="@AUTHOR_TWITTER_HANDLE"> -->
-  <!-- TODO: Same as paper title above -->
-  <!-- <meta name="twitter:title" content="PAPER_TITLE"> -->
-  <!-- TODO: Same as description above -->
-  <!-- <meta name="twitter:description" content="BRIEF_DESCRIPTION_OF_YOUR_RESEARCH_CONTRIBUTION_AND_FINDINGS"> -->
-  <!-- TODO: Same as social preview image above -->
-  <!-- <meta name="twitter:image" content="https://YOUR_DOMAIN.com/static/images/social_preview.png"> -->
-  <!-- <meta name="twitter:image:alt" content="PAPER_TITLE - Research Preview"> -->
-
-  <!-- Academic/Research Specific -->
-  <meta name="citation_title" content="FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time">
-  <!-- <meta name="citation_author" content="FIRST_AUTHOR_LAST, FIRST_AUTHOR_FIRST"> -->
-  <!-- <meta name="citation_author" content="SECOND_AUTHOR_LAST, SECOND_AUTHOR_FIRST"> -->
-  <!-- <meta name="citation_publication_date" content="2024"> -->
-  <!-- <meta name="citation_conference_title" content="CONFERENCE_NAME"> -->
-  <!-- <meta name="citation_pdf_url" content="https://YOUR_DOMAIN.com/static/pdfs/paper.pdf"> -->
-
-  <!-- Additional SEO -->
-  <meta name="theme-color" content="#2563eb">
-  <meta name="msapplication-TileColor" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  
-  <!-- Preconnect for performance -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://ajax.googleapis.com">
-  <link rel="preconnect" href="https://documentcloud.adobe.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
-
-  <!-- TODO: Replace with your paper title and authors -->
-  <title>FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time | Zhejiang University - State Key Laboratory of CAD&CG</title>
-  
-  <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/x-icon" href="static/images/freefuse.png">
-  <link rel="apple-touch-icon" href="static/images/freefuse.png">
-
-  <!-- Critical CSS - Load synchronously -->
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-  
-  <!-- Non-critical CSS - Load asynchronously -->
-  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  
-  <!-- Fallback for browsers that don't support preload -->
-  <noscript>
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  </noscript>
-  
-  <!-- Fonts - Optimized loading -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Defer non-critical JavaScript -->
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="https://documentcloud.adobe.com/view-sdk/main.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/bulma-carousel.min.js"></script>
-  <script defer src="static/js/bulma-slider.min.js"></script>
-  <script defer src="static/js/index.js"></script>
-  
-  <!-- Structured Data for Academic Papers -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    "headline": "FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time",
-    "description": "FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time",
-    "author": [
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="FreeFuse is a training-free framework for multi-subject LoRA fusion via adaptive token-level routing at test time."
+    />
+    <meta name="theme-color" content="#111111" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="FreeFuse — Multi-Subject LoRA Fusion" />
+    <meta
+      property="og:description"
+      content="A training-free framework that routes subject LoRA residuals using attention-derived spatial masks."
+    />
+    <meta property="og:image" content="assets/og-image.jpg" />
+    <meta property="og:url" content="https://future-item.github.io/FreeFuse/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="canonical" href="https://future-item.github.io/FreeFuse/" />
+    <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>FreeFuse — Multi-Subject LoRA Fusion</title>
+    <script type="application/ld+json">
       {
-        "@type": "Person",
-        "name": "Yaoli Liu, Yao-Xiang Ding, Kun Zhou",
-        "affiliation": {
-          "@type": "Organization",
-          "name": "Zhejiang University - State Key Laboratory of CAD&CG"
-        }
-      },
-    ],
-    "datePublished": "2025-09-28",
-    "publisher": {
-      "@type": "Organization",
-      "name": "CONFERENCE_OR_JOURNAL_NAME"
-    },
-    "url": "https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE",
-    "image": "https://YOUR_DOMAIN.com/static/images/social_preview.png",
-    "keywords": ["KEYWORD1", "KEYWORD2", "KEYWORD3", "machine learning", "computer vision"],
-    "abstract": "FULL_ABSTRACT_TEXT_HERE",
-    "citation": "BIBTEX_CITATION_HERE",
-    "isAccessibleForFree": true,
-    "license": "https://creativecommons.org/licenses/by/4.0/",
-    "mainEntity": {
-      "@type": "WebPage",
-      "@id": "https://YOUR_DOMAIN.com/YOUR_PROJECT_PAGE"
-    },
-    "about": [
-      {
-        "@type": "Thing",
-        "name": "RESEARCH_AREA_1"
-      },
-      {
-        "@type": "Thing", 
-        "name": "RESEARCH_AREA_2"
+        "@context": "https://schema.org",
+        "@type": "ScholarlyArticle",
+        "headline": "FreeFuse: Multi-Subject LoRA Fusion via Adaptive Token-Level Routing at Test Time",
+        "author": [
+          { "@type": "Person", "name": "Yaoli Liu" },
+          { "@type": "Person", "name": "Yao-Xiang Ding" },
+          { "@type": "Person", "name": "Kun Zhou" }
+        ],
+        "datePublished": "2026",
+        "publisher": { "@type": "Organization", "name": "Transactions on Machine Learning Research" },
+        "url": "https://arxiv.org/abs/2510.23515",
+        "codeRepository": "https://github.com/yaoliliu/FreeFuse"
       }
-    ]
-  }
-  </script>
-  
-  <!-- Website/Organization Structured Data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "name": "INSTITUTION_OR_LAB_NAME",
-    "url": "https://YOUR_INSTITUTION_WEBSITE.com",
-    "logo": "https://YOUR_DOMAIN.com/static/images/favicon.ico",
-    "sameAs": [
-      "https://twitter.com/YOUR_TWITTER_HANDLE",
-      "https://github.com/YOUR_GITHUB_USERNAME"
-    ]
-  }
-  </script>
-</head>
-<body>
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to article</a>
+    <div class="reading-progress" aria-hidden="true"><span></span></div>
 
-
-  <!-- Scroll to Top Button -->
-  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
-    <i class="fas fa-chevron-up"></i>
-  </button>
-
-  <!-- More Works Dropdown -->
-  <!-- <div class="more-works-container">
-    <button class="more-works-btn" onclick="toggleMoreWorks()" title="View More Works from Our Lab">
-      <i class="fas fa-flask"></i>
-      More Works
-      <i class="fas fa-chevron-down dropdown-arrow"></i>
-    </button>
-    <div class="more-works-dropdown" id="moreWorksDropdown">
-      <div class="dropdown-header">
-        <h4>More Works from Our Lab</h4>
-        <button class="close-btn" onclick="toggleMoreWorks()">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="works-list">
-        <!-- TODO: Replace with your lab's related works -->
-        <!-- <a href="https://arxiv.org/abs/PAPER_ID_1" class="work-item" target="_blank"> -->
-          <!-- <div class="work-info"> -->
-            <!-- TODO: Replace with actual paper title -->
-            <!-- <h5>Paper Title 1</h5> -->
-            <!-- TODO: Replace with brief description -->
-            <!-- <p>Brief description of the work and its main contribution.</p> -->
-            <!-- TODO: Replace with venue and year -->
-            <!-- <span class="work-venue">Conference/Journal 2024</span> -->
-          <!-- </div> -->
-          <!-- <i class="fas fa-external-link-alt"></i> -->
-        <!-- </a> -->
-        <!-- TODO: Add more related works or remove extra items -->
-        <!-- <a href="https://arxiv.org/abs/PAPER_ID_2" class="work-item" target="_blank"> -->
-          <!-- <div class="work-info"> -->
-            <!-- <h5>Paper Title 2</h5> -->
-            <!-- <p>Brief description of the work and its main contribution.</p> -->
-            <!-- <span class="work-venue">Conference/Journal 2023</span> -->
-          <!-- </div> -->
-          <!-- <i class="fas fa-external-link-alt"></i> -->
-        <!-- </a> -->
-        <!-- <a href="https://arxiv.org/abs/PAPER_ID_3" class="work-item" target="_blank">
-          <div class="work-info">
-            <h5>Paper Title 3</h5>
-            <p>Brief description of the work and its main contribution.</p>
-            <span class="work-venue">Conference/Journal 2023</span>
-          </div>
-          <i class="fas fa-external-link-alt"></i>
+    <header class="site-header">
+      <div class="masthead shell">
+        <a class="wordmark" href="#top" aria-label="FreeFuse home">
+          <span>FreeFuse</span>
+          <small>Research</small>
         </a>
+        <p class="issue-line">TMLR · 2026</p>
+        <a
+          class="header-code"
+          href="https://github.com/yaoliliu/FreeFuse"
+          target="_blank"
+          rel="noreferrer"
+          >View code <span aria-hidden="true">↗</span></a
+        >
       </div>
-    </div>
-  </div> -->
-
-  <main id="main-content">
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <!-- TODO: Replace with your paper title -->
-            <h1 class="title is-1 publication-title">FreeFuse: Multi-Subject LoRA Fusion via Auto Masking at Test Time</h1>
-            <div class="is-size-5 publication-authors">
-              <!-- TODO: Replace with your paper authors and their personal links -->
-              <span class="author-block">
-                <a href="https://github.com/yaoliliu" target="_blank">Yaoli Liu</a>,</span>
-                <span class="author-block">
-                  <a href="https://yaoxiangding.github.io/" target="_blank">Yao-Xiang Ding</a>,</span>
-                  <span class="author-block">
-                    <a href="http://kunzhou.net/" target="_blank">Kun Zhou</a>
-                  </span>
-                  </div>
-
-                  <div class="is-size-5 publication-authors">
-                    <!-- TODO: Replace with your institution and conference/journal info -->
-                    <span class="author-block">Zhejiang University - State Key Laboratory of CAD&CG<br>Arxiv Preprint</span>
-                    <!-- TODO: Remove this line if no equal contribution -->
-                    <!-- <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span> -->
-                  </div>
-
-                  <div class="column has-text-centered">
-                    <div class="publication-links">
-                         <!-- TODO: Update with your arXiv paper ID -->
-                      <span class="link-block">
-                        <a href="https://arxiv.org/pdf/2510.23515" target="_blank"
-                        class="external-link button is-normal is-rounded is-dark">
-                        <span class="icon">
-                          <i class="fas fa-file-pdf"></i>
-                        </span>
-                        <span>Paper</span>
-                      </a>
-                    </span>
-
-                    <!-- TODO: Add your supplementary material PDF or remove this section -->
-                    <!-- <span class="link-block">
-                      <a href="static/pdfs/supplementary_material.pdf" target="_blank"
-                      class="external-link button is-normal is-rounded is-dark">
-                      <span class="icon">
-                        <i class="fas fa-file-pdf"></i>
-                      </span>
-                      <span>Supplementary</span>
-                    </a>
-                  </span> -->
-
-                  <!-- TODO: Replace with your GitHub repository URL -->
-                  <!-- <span class="link-block">
-                    <a href="https://github.com/YOUR REPO HERE" target="_blank"
-                    class="external-link button is-normal is-rounded is-dark">
-                    <span class="icon">
-                      <i class="fab fa-github"></i>
-                    </span>
-                    <span>Code</span>
-                  </a>
-                </span> -->
-
-                <!-- TODO: Update with your arXiv paper ID -->
-                <!-- <span class="link-block">
-                  <a href="https://arxiv.org/abs/<ARXIV PAPER ID>" target="_blank"
-                  class="external-link button is-normal is-rounded is-dark">
-                  <span class="icon">
-                    <i class="ai ai-arxiv"></i>
-                  </span>
-                  <span>arXiv</span>
-                </a>
-              </span> -->
-            </div>
-          </div>
+      <nav class="section-nav" aria-label="Article sections">
+        <div class="shell nav-inner">
+          <a href="#overview">Overview</a>
+          <a href="#method">Method</a>
+          <a href="#evidence">Evidence</a>
+          <a href="#results">Results</a>
+          <a href="#resources">Resources</a>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
+      </nav>
+    </header>
 
-
-<!-- Teaser video-->
-<!-- <section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body"> -->
-      <!-- TODO: Replace with your teaser video -->
-      <!-- <video poster="" id="tree" autoplay controls muted loop height="100%" preload="metadata"> -->
-        <!-- TODO: Add your video file path here -->
-        <!-- <source src="static/videos/banner_video.mp4" type="video/mp4"> -->
-      <!-- </video> -->
-      <!-- TODO: Replace with your video description -->
-      <!-- <h2 class="subtitle has-text-centered">
-        Aliquam vitae elit ullamcorper tellus egestas pellentesque. Ut lacus tellus, maximus vel lectus at, placerat pretium mi. Maecenas dignissim tincidunt vestibulum. Sed consequat hendrerit nisl ut maximus. 
-      </h2>
-    </div>
-  </div>
-</section> -->
-<!-- End teaser video -->
-
-<!-- Paper abstract -->
-<section class="section hero is-light">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <!-- TODO: Replace with your paper abstract -->
-          <p>
-            This paper proposes FreeFuse, a novel training-free approach for multi-subject text-to-image generation through automatic fusion of multiple subject LoRAs. In contrast to existing methods that either focus on pre-inference LoRA weight merging or rely on segmentation models and complex techniques like noise blending to isolate LoRA outputs, our key insight is that context-aware dynamic subject masks can be automatically derived from cross-attention layer weights. Mathematical analysis shows that directly applying these masks to LoRA outputs during inference well approximates the case where the subject LoRA is integrated into the diffusion model and used individually for the masked region. FreeFuse demonstrates superior practicality and efficiency as it requires no additional training, no modification to LoRAs, no auxiliary models, and no user-defined prompt templates or region specifications. Alternatively, it only requires users to provide the LoRA activation words for seamless integration into standard workflows. Extensive experiments validate that FreeFuse outperforms existing approaches in both generation quality and usability under the multi-subject generation tasks. </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End paper abstract -->
-
-
-<!-- Image carousel -->
-<section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <div id="results-carousel" class="carousel results-carousel">
-       <div class="item">
-        <!-- TODO: Replace with your research result images -->
-        <img src="static/images/Picture1.png" alt="First research result visualization" loading="lazy"/>
-        <!-- TODO: Replace with description of this result -->
-        <h2 class="subtitle has-text-centered">
-          harry_potter and daiyu_lin looking up together at the viewer, smiling softly, fairy lights reflecting in their eyes.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/Picture2.png" alt="Second research result visualization" loading="lazy"/>
-        <h2 class="subtitle has-text-centered">
-          harry_potter and haoran_liu side by side on the couch, screen glow on their focused faces.
-        </h2>
-      </div>
-      <div class="item">
-        <!-- Your image here -->
-        <img src="static/images/Picture3.png" alt="Third research result visualization" loading="lazy"/>
-        <h2 class="subtitle has-text-centered">
-         harry_potter and sherlock sparring, close-up of their intense expressions and focused eyes.
-       </h2>
-     </div>
-     <div class="item">
-      <!-- Your image here -->
-      <img src="static/images/Picture4.png" alt="Fourth research result visualization" loading="lazy"/>
-      <h2 class="subtitle has-text-centered">
-        harry_potter and rihanna assembling furniture, faces frustrated but laughing together.
-      </h2>
-    </div>
-  </div>
-</div>
-</div>
-</section>
-<!-- End image carousel -->
-
-
-
-
-<!-- Youtube video -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container"> -->
-      <!-- Paper video. -->
-      <!-- <h2 class="title is-3">Video Presentation</h2>
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          
-          <div class="publication-video"> -->
-            <!-- TODO: Replace with your YouTube video ID -->
-            <!-- <iframe src="https://www.youtube.com/embed/JkaxUblCGz0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End youtube video -->
-
-
-<!-- Video carousel -->
-<!-- <section class="hero is-small">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title is-3">Another Carousel</h2>
-      <div id="results-carousel" class="carousel results-carousel">
-        <div class="item item-video1"> -->
-          <!-- TODO: Add poster image for better preview -->
-          <!-- <video poster="" id="video1" controls muted loop height="100%" preload="metadata"> -->
-            <!-- Your video file here -->
-            <!-- <source src="static/videos/carousel1.mp4" type="video/mp4"> -->
-          <!-- </video> -->
-        <!-- </div> -->
-        <!-- <div class="item item-video2"> -->
-          <!-- TODO: Add poster image for better preview -->
-          <!-- <video poster="" id="video2" controls muted loop height="100%" preload="metadata"> -->
-            <!-- Your video file here -->
-            <!-- <source src="static/videos/carousel2.mp4" type="video/mp4"> -->
-          <!-- </video> -->
-        <!-- </div> -->
-        <!-- <div class="item item-video3"> -->
-          <!-- TODO: Add poster image for better preview -->
-          <!-- <video poster="" id="video3" controls muted loop height="100%" preload="metadata"> -->
-            <!-- Your video file here -->
-            <!-- <source src="static/videos/carousel3.mp4" type="video/mp4">
-          </video>
-        </div>
-      </div>
-    </div>
-  </div>
-</section> -->
-<!-- End video carousel -->
-
-
-
-
-
-
-<!-- Paper poster -->
-<!-- <section class="hero is-small is-light">
-  <div class="hero-body">
-    <div class="container">
-      <h2 class="title">Poster</h2> -->
-
-      <!-- TODO: Replace with your poster PDF -->
-      <!-- <iframe  src="static/pdfs/sample.pdf" width="100%" height="550">
-          </iframe>
-        
-      </div>
-    </div>
-  </section> -->
-<!--End paper poster -->
-
-
-
-<!--BibTex citation -->
-  <!-- <section class="section" id="BibTeX">
-    <div class="container is-max-desktop content">
-      <div class="bibtex-header">
-        <h2 class="title">BibTeX</h2>
-        <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
-          <i class="fas fa-copy"></i>
-          <span class="copy-text">Copy</span>
-        </button>
-      </div>
-      <pre id="bibtex-code"><code>@article{YourPaperKey2024,
-  title={Your Paper Title Here},
-  author={First Author and Second Author and Third Author},
-  journal={Conference/Journal Name},
-  year={2024},
-  url={https://your-domain.com/your-project-page}
-}</code></pre>
-    </div>
-</section> -->
-<!--End BibTex citation -->
-
-
-  <footer class="footer">
-  <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-
-          <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
+    <main id="main-content">
+      <article id="top">
+        <header class="hero shell">
+          <p class="kicker">Artificial Intelligence <span>/</span> Personalized Generation</p>
+          <h1>Multi-Subject LoRA Fusion<br /><em>at Test Time</em></h1>
+          <p class="dek">
+            FreeFuse routes each subject adapter to its corresponding semantic region using attention-derived
+            spatial masks, without retraining, external segmentors, or user-defined masks.
           </p>
 
+          <div class="byline-row">
+            <p class="byline">
+              By <strong>Yaoli Liu</strong>, <strong>Yao-Xiang Ding</strong><sup>✦</sup> and
+              <strong>Kun Zhou</strong>
+            </p>
+            <p class="affiliation">State Key Laboratory of CAD&amp;CG · Zhejiang University</p>
+          </div>
+
+          <div class="hero-actions" aria-label="Research links">
+            <a class="button button-dark" href="https://arxiv.org/pdf/2510.23515" target="_blank" rel="noreferrer">
+              Read the paper <span aria-hidden="true">↗</span>
+            </a>
+            <a class="button" href="https://github.com/yaoliliu/FreeFuse" target="_blank" rel="noreferrer">
+              Explore the code <span aria-hidden="true">↗</span>
+            </a>
+            <a class="button" href="#citation">Cite this work <span aria-hidden="true">↓</span></a>
+          </div>
+        </header>
+
+        <figure class="hero-figure shell">
+          <button class="image-button" type="button" data-full-image="assets/teaser.webp" aria-label="Enlarge the FreeFuse overview figure">
+            <img
+              src="assets/teaser.webp"
+              width="2400"
+              height="1707"
+              alt="Comparison of direct six-LoRA sampling, which produces conflicts and artifacts, with FreeFuse sampling and compatible control modules."
+              fetchpriority="high"
+            />
+          </button>
+          <figcaption>
+            <span class="fig-number">Fig. 1</span>
+            Comparison between direct six-LoRA sampling and FreeFuse, with examples of compatibility with
+            ControlNet, Redux, IP-Adapter, and style LoRAs.
+          </figcaption>
+        </figure>
+
+        <section class="numbers-band shell" aria-label="FreeFuse at a glance">
+          <div>
+            <strong>0</strong>
+            <span>additional training</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <span>external segmentors</span>
+          </div>
+          <div>
+            <strong>0</strong>
+            <span>user-defined masks</span>
+          </div>
+          <div>
+            <strong>2.10×</strong>
+            <span>faster than LoRAShop at 5 LoRAs</span>
+          </div>
+        </section>
+
+        <section id="overview" class="story-section shell article-grid">
+          <aside class="section-marker">
+            <span>01</span>
+            <p>The brief</p>
+          </aside>
+          <div class="prose">
+            <p class="lead drop-cap">
+              Combining multiple subject LoRAs should be simple: load the adapters, name their subjects and
+              sample. In practice, each LoRA broadcasts its update across the whole scene. Faces borrow one
+              another’s features, objects bleed across boundaries, and composition deteriorates as more adapters
+              compete.
+            </p>
+            <p>
+              FreeFuse reframes this as a routing problem. Rather than modifying or retraining the LoRAs, it asks
+              the base model where each subject is emerging, turns that signal into a dense spatial router, and
+              applies each adapter only to the image tokens assigned to its subject.
+            </p>
+            <p>
+              The framework runs entirely at test time. Users provide the usual activation words; the model’s own
+              cross-modal alignment supplies the localization signal. The frozen base model continues to reason
+              globally while additive LoRA residuals are kept local.
+            </p>
+          </div>
+          <aside class="margin-note">
+            <p class="note-label">In one sentence</p>
+            <p>Let the base model compose the scene; route only the competing LoRA residuals.</p>
+          </aside>
+        </section>
+
+        <section id="method" class="story-section shell article-grid">
+          <aside class="section-marker">
+            <span>02</span>
+            <p>The method</p>
+          </aside>
+          <div class="prose">
+            <h2>A router built from the model’s own attention</h2>
+            <p class="lead">
+              FreeFuse separates generation into two passes. The first discovers subjects; the second regenerates
+              the scene with spatially routed LoRA residuals and attention bias.
+            </p>
+          </div>
+        </section>
+
+        <figure class="feature-figure shell">
+          <button class="image-button" type="button" data-full-image="assets/pipeline.webp" aria-label="Enlarge the FreeFuse pipeline diagram">
+            <img
+              src="assets/pipeline.webp"
+              width="2200"
+              height="723"
+              loading="lazy"
+              alt="Two-stage FreeFuse pipeline showing robust mask extraction followed by router-controlled and bias-guided generation."
+            />
+          </button>
+          <figcaption>
+            <span class="fig-number">Fig. 2</span>
+            In Phase 1, FreeFuseAttn extracts subject masks. In Phase 2, a token-level router isolates LoRA
+            residuals while attention bias reinforces semantic-spatial alignment.
+          </figcaption>
+        </figure>
+
+        <section class="step-grid shell" aria-label="FreeFuse pipeline steps">
+          <article>
+            <span class="step-number">1</span>
+            <h3>Find semantic anchors</h3>
+            <p>Cross-attention identifies sparse but reliable text-to-image correspondences early in denoising.</p>
+          </article>
+          <article>
+            <span class="step-number">2</span>
+            <h3>Grow dense masks</h3>
+            <p>Token similarity propagates those anchors into contiguous regions, reducing holes and ambiguity.</p>
+          </article>
+          <article>
+            <span class="step-number">3</span>
+            <h3>Route and regenerate</h3>
+            <p>Each subject’s LoRA residual is gated to its region; attention bias suppresses identity leakage.</p>
+          </article>
+        </section>
+
+        <section id="evidence" class="story-section shell article-grid">
+          <aside class="section-marker">
+            <span>03</span>
+            <p>The evidence</p>
+          </aside>
+          <div class="prose">
+            <h2>Localization across blocks and denoising steps</h2>
+            <p class="lead">
+              The localization signal is strongest in early-to-middle denoising steps and deeper transformer
+              blocks, where visual semantics become spatially distinct.
+            </p>
+            <p>
+              Across 300 generated samples, FreeFuseAttn produces more precise semantic regions than raw
+              cross-attention, ConceptAttention or self-attention matching. Block 18 at step index 4 reaches the
+              highest mean Precision@10% of <strong>0.704</strong>, supporting the default extraction point.
+            </p>
+          </div>
+          <aside class="margin-note data-note">
+            <p class="note-label">Evaluation</p>
+            <strong>300</strong>
+            <p>samples compared against SAM3-generated ground-truth masks.</p>
+          </aside>
+        </section>
+
+        <figure class="feature-figure shell">
+          <button class="image-button" type="button" data-full-image="assets/attention-study.webp" aria-label="Enlarge the attention localization study">
+            <img
+              src="assets/attention-study.webp"
+              width="2200"
+              height="943"
+              loading="lazy"
+              alt="Attention maps across denoising steps, transformer blocks and localization methods."
+            />
+          </button>
+          <figcaption>
+            <span class="fig-number">Attention study</span>
+            FreeFuseAttn combines semantic anchors from cross-attention with image-token similarity to separate
+            visually similar subjects.
+          </figcaption>
+        </figure>
+
+        <section class="chart-pair shell">
+          <figure>
+            <button class="image-button" type="button" data-full-image="assets/locality-heatmap.webp" aria-label="Enlarge the self-attention locality heatmap">
+              <img src="assets/locality-heatmap.webp" width="1000" height="632" loading="lazy" alt="Heatmap of intra-subject versus inter-subject attention locality by block and denoising step." />
+            </button>
+            <figcaption><span class="fig-number">A</span> Deeper blocks exhibit strong intra-subject locality.</figcaption>
+          </figure>
+          <figure>
+            <button class="image-button" type="button" data-full-image="assets/precision-curve.webp" aria-label="Enlarge the localization precision chart">
+              <img src="assets/precision-curve.webp" width="1200" height="591" loading="lazy" alt="Precision at K comparison of FreeFuseAttn with competing localization mechanisms." />
+            </button>
+            <figcaption><span class="fig-number">B</span> Precision@K across localization mechanisms.</figcaption>
+          </figure>
+        </section>
+
+        <section id="results" class="story-section shell article-grid">
+          <aside class="section-marker">
+            <span>04</span>
+            <p>The results</p>
+          </aside>
+          <div class="prose">
+            <h2>Quantitative comparison</h2>
+            <p class="lead">
+              We evaluate character, object, and face similarity; prompt alignment and aesthetics; and human
+              preference on a benchmark spanning humans, anime figures, 3D characters, and objects.
+            </p>
+          </div>
+        </section>
+
+        <section class="results-table shell-wide" aria-labelledby="quantitative-table-title">
+          <div class="table-heading">
+            <div>
+              <p class="eyebrow">Table 1</p>
+              <h3 id="quantitative-table-title">Full quantitative comparison</h3>
+            </div>
+            <p>Best result in <strong>bold</strong>. Arrows indicate the preferred direction.</p>
+          </div>
+          <div class="table-scroll" tabindex="0" aria-label="Scrollable quantitative comparison table">
+            <table>
+              <caption>Comparison with multi-subject personalization methods across all metrics reported in the paper.</caption>
+              <thead>
+                <tr>
+                  <th rowspan="2" scope="col">Method</th>
+                  <th colspan="4" scope="colgroup">Character similarity</th>
+                  <th colspan="4" scope="colgroup">Object similarity</th>
+                  <th colspan="2" scope="colgroup">Face similarity</th>
+                  <th colspan="3" scope="colgroup">Prompt / aesthetic</th>
+                  <th colspan="2" scope="colgroup">User study</th>
+                </tr>
+                <tr>
+                  <th scope="col">DINOv2 ↑</th><th scope="col">DINOv3 ↑</th><th scope="col">DreamSim ↓</th><th scope="col">CLIP-I ↑</th>
+                  <th scope="col">DINOv2 ↑</th><th scope="col">DINOv3 ↑</th><th scope="col">DreamSim ↓</th><th scope="col">CLIP-I ↑</th>
+                  <th scope="col">ArcFace ↑</th><th scope="col">LVFace ↑</th>
+                  <th scope="col">CLIP-T ↑</th><th scope="col">HPSv2 ↑</th><th scope="col">HPSv3 ↑</th>
+                  <th scope="col">Q1 ↓</th><th scope="col">Q2 ↓</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">OmniGen</th>
+                  <td>0.4699</td><td>0.5177</td><td>0.4233</td><td>0.6367</td>
+                  <td>0.4662</td><td>0.5168</td><td>0.5048</td><td>0.6226</td>
+                  <td>0.2990</td><td>0.1661</td><td>0.2088</td><td>0.2484</td><td>5.588</td><td>4.9</td><td>4.5</td>
+                </tr>
+                <tr>
+                  <th scope="row">UMO</th>
+                  <td>0.4378</td><td>0.4498</td><td>0.4710</td><td>0.5919</td>
+                  <td><strong>0.6535</strong></td><td><strong>0.6884</strong></td><td>0.3635</td><td>0.7424</td>
+                  <td>0.3180</td><td>0.1661</td><td>0.2277</td><td>0.2629</td><td><strong>8.756</strong></td><td>2.9</td><td>3.5</td>
+                </tr>
+                <tr>
+                  <th scope="row">Multi-Redux</th>
+                  <td>0.4433</td><td>0.4622</td><td>0.5363</td><td>0.5306</td>
+                  <td>0.2456</td><td>0.2789</td><td>0.7255</td><td>0.3486</td>
+                  <td>0.1475</td><td>0.0361</td><td>0.1225</td><td>0.2341</td><td>1.062</td><td>6.0</td><td>5.9</td>
+                </tr>
+                <tr>
+                  <th scope="row">Multi-IP-Adapter</th>
+                  <td>0.4795</td><td>0.4918</td><td>0.4707</td><td>0.6028</td>
+                  <td>0.4790</td><td>0.4970</td><td>0.5304</td><td>0.6424</td>
+                  <td>0.1840</td><td>0.0710</td><td>0.2911</td><td>0.2831</td><td>7.197</td><td>3.9</td><td>3.4</td>
+                </tr>
+                <tr>
+                  <th scope="row">LoRAShop</th>
+                  <td>0.4597</td><td>0.4974</td><td>0.4209</td><td>0.6567</td>
+                  <td>0.6269</td><td>0.6394</td><td>0.4324</td><td>0.7129</td>
+                  <td>0.3886</td><td>0.2350</td><td><strong>0.2980</strong></td><td><strong>0.2880</strong></td><td>8.494</td><td>2.2</td><td>2.7</td>
+                </tr>
+                <tr class="freefuse-row">
+                  <th scope="row">FreeFuse</th>
+                  <td><strong>0.4988</strong></td><td><strong>0.5235</strong></td><td><strong>0.3753</strong></td><td><strong>0.6764</strong></td>
+                  <td>0.6393</td><td>0.6804</td><td><strong>0.3516</strong></td><td><strong>0.7499</strong></td>
+                  <td><strong>0.4275</strong></td><td><strong>0.2534</strong></td><td>0.2766</td><td>0.2857</td><td>8.279</td><td><strong>1.1</strong></td><td><strong>1.1</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">Q1 and Q2 report average user-study ranks; lower values indicate stronger preference.</p>
+        </section>
+
+        <figure class="feature-figure shell figure-rule">
+          <button class="image-button" type="button" data-full-image="assets/qualitative-comparison.webp" aria-label="Enlarge the qualitative comparison">
+            <img
+              src="assets/qualitative-comparison.webp"
+              width="2400"
+              height="587"
+              loading="lazy"
+              alt="Qualitative comparison of FreeFuse and five baseline methods on four-character and character-object prompts."
+            />
+          </button>
+          <figcaption>
+            <span class="fig-number">Comparison</span>
+            Qualitative comparison on prompts involving four characters and character–object interactions.
+          </figcaption>
+        </figure>
+
+        <div class="full-bleed-panel">
+          <figure class="feature-figure shell dark-figure">
+            <button class="image-button" type="button" data-full-image="assets/result-gallery.webp" aria-label="Enlarge the FreeFuse result gallery">
+              <img
+                src="assets/result-gallery.webp"
+                width="2200"
+                height="1293"
+                loading="lazy"
+                alt="Gallery of FreeFuse generations across realistic people, stylized characters, creatures, clothes, objects and vehicles."
+              />
+            </button>
+            <figcaption>
+              <span class="fig-number">Across domains</span>
+              Examples across photorealistic identities, anime and 3D characters, non-human subjects, apparel,
+              accessories, and vehicles.
+            </figcaption>
+          </figure>
         </div>
+
+        <section class="story-section shell article-grid scaling-intro">
+          <aside class="section-marker compact">
+            <span>05</span>
+            <p>Scaling</p>
+          </aside>
+          <div class="prose">
+            <h2>Scaling with the number of adapters</h2>
+            <p class="lead">
+              As the number of simultaneously loaded LoRAs rises from two to five, FreeFuse maintains a wide
+              higher ArcFace similarity than direct activation, with an average difference of <strong>+0.3207</strong>.
+            </p>
+          </div>
+        </section>
+
+        <section class="chart-pair shell scaling-charts">
+          <figure>
+            <button class="image-button" type="button" data-full-image="assets/identity-scaling.webp" aria-label="Enlarge the identity scaling chart">
+              <img src="assets/identity-scaling.webp" width="1000" height="577" loading="lazy" alt="ArcFace identity preservation as the number of active LoRAs increases." />
+            </button>
+            <figcaption><span class="fig-number">Identity</span> ArcFace similarity as the number of active LoRAs increases.</figcaption>
+          </figure>
+          <figure>
+            <button class="image-button" type="button" data-full-image="assets/quality-scaling.webp" aria-label="Enlarge the image-quality scaling chart">
+              <img src="assets/quality-scaling.webp" width="1000" height="577" loading="lazy" alt="HPSv2 image quality as the number of active LoRAs increases." />
+            </button>
+            <figcaption><span class="fig-number">Quality</span> HPSv2 as the number of active LoRAs increases.</figcaption>
+          </figure>
+        </section>
+
+        <section class="compatibility shell">
+          <p class="eyebrow">Compatibility</p>
+          <h2>Models and conditioning modules</h2>
+          <p>
+            FreeFuse is implemented for FLUX.1, FLUX.2 Klein, SDXL, Z-Image, Krea2 and ComfyUI workflows, and
+            composes with common spatial, reference and style controls.
+          </p>
+          <ul aria-label="Supported models and modules">
+            <li>FLUX</li>
+            <li>SDXL</li>
+            <li>Z-Image</li>
+            <li>Krea2</li>
+            <li>ControlNet</li>
+            <li>IP-Adapter</li>
+            <li>Redux</li>
+            <li>ComfyUI</li>
+          </ul>
+        </section>
+
+        <section id="resources" class="resources shell">
+          <div class="resource-heading">
+            <p class="eyebrow">Resources</p>
+            <h2>Paper, code, and workflows</h2>
+          </div>
+          <div class="resource-list">
+            <a href="https://arxiv.org/abs/2510.23515" target="_blank" rel="noreferrer">
+              <span>Paper</span><small>arXiv</small><b aria-hidden="true">↗</b>
+            </a>
+            <a href="https://github.com/yaoliliu/FreeFuse" target="_blank" rel="noreferrer">
+              <span>Source code</span><small>GitHub</small><b aria-hidden="true">↗</b>
+            </a>
+            <a href="https://github.com/yaoliliu/FreeFuse/tree/master/freefuse_comfyui/workflows" target="_blank" rel="noreferrer">
+              <span>Ready-to-run workflows</span><small>ComfyUI</small><b aria-hidden="true">↗</b>
+            </a>
+          </div>
+        </section>
+
+        <section id="citation" class="citation shell">
+          <div>
+            <p class="eyebrow">Citation</p>
+            <h2>BibTeX</h2>
+          </div>
+          <div class="citation-box">
+            <pre><code id="bibtex">@article{liu2026freefuse,
+  title   = {FreeFuse: Multi-Subject LoRA Fusion via
+             Adaptive Token-Level Routing at Test Time},
+  author  = {Liu, Yaoli and Ding, Yao-Xiang and Zhou, Kun},
+  journal = {Transactions on Machine Learning Research},
+  year    = {2026},
+  url     = {https://arxiv.org/abs/2510.23515}
+}</code></pre>
+            <button id="copy-citation" type="button">Copy BibTeX</button>
+          </div>
+        </section>
+      </article>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-inner">
+        <div>
+          <strong>FreeFuse</strong>
+          <p>Adaptive token-level routing for multi-subject LoRA fusion.</p>
+        </div>
+        <p>Research project · Zhejiang University · <span id="current-year">2026</span></p>
       </div>
-    </div>
-  </div>
-</footer>
+    </footer>
 
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+    <dialog id="image-dialog" class="image-dialog" aria-label="Expanded research figure">
+      <button class="dialog-close" type="button" aria-label="Close enlarged figure">×</button>
+      <img alt="Expanded research figure" />
+    </dialog>
 
-    <!-- End of Statcounter Code -->
-
+    <script src="script.js"></script>
   </body>
-  </html>
+</html>
